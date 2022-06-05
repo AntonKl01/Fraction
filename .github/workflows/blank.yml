@@ -73,10 +73,12 @@ jobs:
           .\vcpkg\bootstrap-vcpkg.bat
           vcpkg install pthread
           vcpkg integrate install
-
+          
+      - name: debug1
+        run: dir
       - name: build
         run: |
-          cmake -S ./ -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake -G "Visual Studio 17 2022" -A x64  
+          cmake -S ./ -DCMAKE_TOOLCHAIN_FILE=scripts/buildsystems/vcpkg.cmake -G "Visual Studio 17 2022" -A x64  
           cmake --build . --config Release
       - name: debug
         run: dir
