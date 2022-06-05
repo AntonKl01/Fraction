@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      
       - name: check tools
         run: |
           cmake --version
@@ -26,15 +27,29 @@ jobs:
         run: |
           cmake ./
           cmake --build .
+          
+      - run: mkdir -p share_artifact
+
+      - run: cat test/DHA-frac.test > share_artifact/share_test
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: test
+          path: share_artifact/share_test
   
   test:
     needs: [build_unix]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      
+      - uses: actions/download-artifact@v2
+        with:
+          name: test
+          
       - name: google_test
         run: |
-          ./GHA-frac.test
+          ./test
     
     
           
