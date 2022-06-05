@@ -28,14 +28,20 @@ jobs:
           cmake ./
           cmake --build .
           
-      - run: mkdir -p share_artifact
+      - name: ll
+        run: ll
+          
+      - run: touch share_test
 
-      - run: cat /test/DHA-frac.test > /share_artifact/share_test
+      - name: ll
+        run: ll
+      
+      - run: cat /test/DHA-frac.test > share_test
 
       - uses: actions/upload-artifact@v2
         with:
           name: test
-          path: /share_artifact/share_test
+          path: share_test
   
   test:
     needs: [build_unix]
