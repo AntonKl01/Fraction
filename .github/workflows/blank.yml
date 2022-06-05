@@ -67,14 +67,17 @@ jobs:
     steps: 
       - uses: actions/checkout@v2
       - uses: ilammy/msvc-dev-cmd@v1
-      - name: debug3
-        run: dir
+      - name: install_vcpkg
+        run: |
+          git clone https://github.com/Microsoft/vcpkg.git
+          .\vcpkg\bootstrap-vcpkg.bat
+          vcpkg install pthread
+          vcpkg integrate install
+
       - name: build
         run: |
-          cmake -S ./ -G "Visual Studio 17 2022" -A x64  
+          cmake -S ./ -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake -G "Visual Studio 17 2022" -A x64  
           cmake --build . --config Release
-      - name: debug1
-        run: dir build
-      - name: debug2
+      - name: debug
         run: dir
   
