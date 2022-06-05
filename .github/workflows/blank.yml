@@ -52,7 +52,17 @@ jobs:
           path: src/${{ env.app_name }}
           retention-days: 1
           
+  sys_info_windows:
+    runs-on: windows-latest 
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: check tools
+        run: |
+          cmake --version
+          
   build_windows:
+    needs: [sys_info_windows]
     runs-on: windows-latest
     steps: 
       - uses: actions/checkout@v2
