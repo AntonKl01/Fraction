@@ -37,6 +37,9 @@ jobs:
       - name: run_unix_test
         run: |
           ./test/GHA-frac.test
+          
+      - name: debug
+        run: ls src
       
       - name: result
         run: |
