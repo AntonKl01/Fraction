@@ -34,14 +34,16 @@ jobs:
           touch share_test
           
       - name: ll
-        run: ls
+        run: |
+          cd test
+          ls
       
-      - run: cat test/DHA-frac.test > share_artifact/share_test
+      - run: cat /test/DHA-frac.test > /share_artifact/share_test
 
       - uses: actions/upload-artifact@v2
         with:
           name: test
-          path: share_artifact/share_test
+          path: /share_artifact/share_test
   
   test:
     needs: [build_unix]
