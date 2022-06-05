@@ -31,19 +31,13 @@ jobs:
           cmake ./
           cmake --build .
       
-      - name: debug
-        run: ls test
-      
       - name: run_unix_test
         run: |
           ./test/GHA-frac.test
-          
-      - name: debug
-        run: ls src
       
       - name: result
         run: |
-          ./src/DHA-frac.info
+          ./src/GHA-frac.info
         
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v2.3.1
