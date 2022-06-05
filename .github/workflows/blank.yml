@@ -16,6 +16,7 @@ jobs:
       - name: check tools
         run: |
           cmake --version
+          gcc --version
         
   build_unix:
     needs: [sys_info]
@@ -28,12 +29,11 @@ jobs:
           cmake ./
           cmake --build .
           
-      - name: debug
-        run: ls test
-          
-      - name: run_test
+      - name: save_test
         run: |
-          ./test/GHA-frac.test
+          touch save_test
+          cat test/GHA-frac.test > save_test
+          ./save_test
   
   test:
     needs: [build_unix]
