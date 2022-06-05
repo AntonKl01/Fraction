@@ -8,8 +8,11 @@ env:
   global_env: global
 
 jobs:  
-  sys_info:
-    runs-on: ubuntu-latest
+  sys_info_unix_macos:
+    runs-on: ${{ matrix.os }} 
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, macos-latest ]
     steps:
       - uses: actions/checkout@v3
       
@@ -19,7 +22,7 @@ jobs:
           gcc --version
         
   build_unix_macos:
-    needs: [sys_info]
+    needs: [sys_info_unix_macos]
     runs-on: ${{ matrix.os }} 
     strategy:
       matrix:
@@ -48,3 +51,22 @@ jobs:
           name: my_app_${{ matrix.os }}
           path: src/${{ env.app_name }}
           retention-days: 1
+          
+  sys_info_windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: check tools
+        run: |
+          cmake --version
+          gcc --version
+          
+  build_windows:
+    needs: [sys_info_windows]
+    runs-on: windows-latest
+    
+  report:
+    needs: [build_unix_macos, build_windows]
+    runs-on: ubuntu-latest
+  
