@@ -21,6 +21,8 @@ jobs:
   build_unix:
     needs: [sys_info]
     runs-on: ubuntu-latest
+    env:
+      app_name: GHA-frac.info
     steps:
       - uses: actions/checkout@v3
       
@@ -29,34 +31,17 @@ jobs:
           cmake ./
           cmake --build .
           
-      - name: save_test
+      - name: run_unix_test
         run: |
-          touch save_test
-          cat test/GHA-frac.test > save_test
-          
-      - name: share_artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: save_test
-          path: ./save_test
-  
-  test:
-    needs: [build_unix]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
+          ./test/DHA-frac.test
       
-      - name: download_test
-        uses: actions/download-artifact@v2
-        with:
-          name: save_test
-          
-      - name: setting
-        run: chmod ugo+rwx save_test
-        
-      - name: google_test
+      - name: result
         run: |
-          ./save_test
-    
-    
-          
+          ./src/DHA-frac.info
+        
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v2.3.1
+        with:
+          name: my_app
+          path: ./${{ env.app_name }}
+          retention-days: 1
