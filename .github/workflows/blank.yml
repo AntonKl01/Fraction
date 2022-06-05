@@ -28,24 +28,15 @@ jobs:
           cmake ./
           cmake --build .
           
-      - run: touch share_test
-      
-      - run: cat /test/DHA-frac.test > share_test
-
-      - uses: actions/upload-artifact@v2
-        with:
-          name: test
-          path: ./share_test
+      - name: test
+        run: |
+          ./test/DHA-frac.test
   
   test:
     needs: [build_unix]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      
-      - uses: actions/download-artifact@v2
-        with:
-          name: test
           
       - name: google_test
         run: |
