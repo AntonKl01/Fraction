@@ -30,12 +30,12 @@ jobs:
           
       - run: touch share_test
       
-      - run: cat test/DHA-frac.test > share_test
+      - run: cat ./test/DHA-frac.test > ./share_test
 
       - uses: actions/upload-artifact@v2
         with:
           name: test
-          path: share_test
+          path: ./share_test
   
   test:
     needs: [build_unix]
