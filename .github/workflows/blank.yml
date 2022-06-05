@@ -35,7 +35,7 @@ jobs:
           
       - name: ll
         run: |
-          cd test
+          cd share_artifact
           ls
       
       - run: cat /test/DHA-frac.test > /share_artifact/share_test
