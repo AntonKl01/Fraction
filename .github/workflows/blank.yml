@@ -35,7 +35,7 @@ jobs:
           cat test/GHA-frac.test > save_test
           
       - name: share_artifact
-        uses: actions/upload-artifact@v2.3.1
+        uses: actions/upload-artifact@v2
         with:
           name: save_test
           path: ./save_test
@@ -47,7 +47,7 @@ jobs:
       - uses: actions/checkout@v3
       
       - name: download_test
-        uses: actions/download-artifact@v2.3.1
+        uses: actions/download-artifact@v2
         with:
           name: save_test
           
