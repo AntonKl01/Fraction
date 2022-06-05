@@ -4,8 +4,6 @@ on:
   pull_request:
     branches: [ "main" ]
   workflow_dispatch:
-env: 
-  global_env: global
 
 jobs:  
   sys_info_unix_macos:
@@ -35,7 +33,7 @@ jobs:
       - name: build
         run: |
           cmake ./
-          cm --build .
+          cmake --build .
       
       - name: run_unix_test
         run: |
@@ -53,7 +51,7 @@ jobs:
           retention-days: 1
           
   report:
-    if: failure()
+    if: failure() && github.ref == 'refs/heads/main' 
     runs-on: ubuntu-latest
     needs: [build_unix_macos]
     steps:
