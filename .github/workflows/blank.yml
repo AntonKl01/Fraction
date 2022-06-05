@@ -33,7 +33,6 @@ jobs:
         run: |
           touch save_test
           cat test/GHA-frac.test > save_test
-          chmod ugo+rwx save_test
           
       - name: share_artifact
         uses: actions/upload-artifact@v2.3.1
@@ -48,10 +47,13 @@ jobs:
       - uses: actions/checkout@v3
       
       - name: download_test
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v2.3.1
         with:
           name: save_test
-    
+          
+      - name: setting
+        run: chmod ugo+rwx save_test
+        
       - name: google_test
         run: |
           ./save_test
