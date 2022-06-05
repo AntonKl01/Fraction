@@ -30,7 +30,7 @@ jobs:
           
       - name: test
         run: |
-          ./test/DHA-frac.test
+          ./src/DHA-frac.info
   
   test:
     needs: [build_unix]
