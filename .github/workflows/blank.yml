@@ -25,4 +25,18 @@ jobs:
         run: |
           cmake ./
           cmake --build .
+      - name: run_exe
+        run: |
+          ./src/GHA-frac.info
+  
+  test:
+    needs: [build_unix]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: google_test
+        run: |
+          test/GHA-frac.test
+    
+    
           
