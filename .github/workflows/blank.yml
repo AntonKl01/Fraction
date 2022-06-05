@@ -28,6 +28,10 @@ jobs:
       - name: run_exe
         run: |
           ./src/GHA-frac.info
+          
+      - name: debug
+        run: |
+          ls
   
   test:
     needs: [build_unix]
