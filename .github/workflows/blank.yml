@@ -29,12 +29,12 @@ jobs:
           cmake --build .
           
       - name: ll
-        run: ll
+        run: ls
           
       - run: touch share_test
 
       - name: ll
-        run: ll
+        run: ls
       
       - run: cat /test/DHA-frac.test > share_test
 
