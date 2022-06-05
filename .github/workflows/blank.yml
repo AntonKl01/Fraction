@@ -29,11 +29,11 @@ jobs:
           cmake --build .
           
       - name: debug
-        run: ls src
+        run: ls test
           
-      - name: run_exe
+      - name: run_test
         run: |
-          ./src/GHA-frac.info
+          ./test/GHA-frac.test
   
   test:
     needs: [build_unix]
