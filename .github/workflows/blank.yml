@@ -59,8 +59,7 @@ jobs:
       - uses: ilammy/msvc-dev-cmd@v1
       - name: build
         run: |
-          mkdir build
-          cmake -S ./ -B ./build -G "Visual Studio 16 2019" -A x64
+          cmake ./ 
           cmake --build . --config Release
       - name: debug1
         run: ls build
