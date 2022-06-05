@@ -7,12 +7,22 @@ on:
 env: 
   global_env: global
 
-jobs:    
-  build_unix:
+jobs:  
+  sys_info:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - name: check tools
         run: |
           cmake --version
+        
+  build_unix:
+    needs: [sys_info]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: build
+        run: |
+          cmake ./
+          cmake --build .
           
