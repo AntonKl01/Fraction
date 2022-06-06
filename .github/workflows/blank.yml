@@ -118,7 +118,7 @@ jobs:
       - name: configure_cmake_win
         run: |
           mkdir config && cd config
-          cmake ../
+          cmake ../ -G "Visual Studio 17 2022"
           
       - name: save_configuration
         uses: actions/upload-artifact@master
@@ -150,7 +150,7 @@ jobs:
           path: config/
     
   tests_win:
-    needs: [build]
+    needs: [build_win]
     runs-on: windows-latest
     steps:
       - name: download_build
@@ -165,7 +165,7 @@ jobs:
           ./GHA-frac.test
       
   demonstration_win:
-    needs: [build]
+    needs: [build_win]
     runs-on: windows-latest
     steps:
       - name: download_build
