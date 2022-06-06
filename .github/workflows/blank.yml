@@ -97,91 +97,9 @@ jobs:
           cd config/src
           chmod ugo+rxw GHA-frac.info
           ./GHA-frac.info
-          
-          
-          
-  sys_info_win:
-    runs-on: windows-latest 
-    steps:
-      - uses: actions/checkout@v3
-      
-      - name: check tools
-        run: |
-          cmake --version
-          
-  configuration_win:
-    needs: [sys_info_win]
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v3
-      
-      - name: configure_cmake_win
-        run: |
-          mkdir config && cd config
-          cmake ../ -G "Visual Studio 17 2022"
-          
-      - name: save_configuration
-        uses: actions/upload-artifact@master
-        with:
-          name: cmake_configuration_win
-          path: config/    
-          
-  build_win:
-    needs: [configuration_win]
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v3
-      
-      - name: download_configuration
-        uses: actions/download-artifact@master
-        with:
-          name: cmake_configuration_win
-          path: config/
-      
-      - name: cmake_build_win
-        run: |
-          cd config
-          cmake --build .
-          
-      - name: save_build
-        uses: actions/upload-artifact@master
-        with:
-          name: build_win
-          path: config/
-    
-  tests_win:
-    needs: [build_win]
-    runs-on: windows-latest
-    steps:
-      - name: download_build
-        uses: actions/download-artifact@master
-        with:
-          name: build_win
-          path: config/
-      - name: run_unix_test
-        run: |
-          cd config/test
-          chmod ugo+rxw GHA-frac.test
-          ./GHA-frac.test
-      
-  demonstration_win:
-    needs: [build_win]
-    runs-on: windows-latest
-    steps:
-      - name: download_build
-        uses: actions/download-artifact@master
-        with:
-          name: build_win
-          path: config/
-      - name: result
-        run: |
-          cd config/src
-          chmod ugo+rxw GHA-frac.info
-          ./GHA-frac.info
-      
-          
+        
   report:
-    needs: [demonstration, tests, demonstration_win, tests_win]
+    needs: [demonstration, tests]
     if: failure() 
     runs-on: ubuntu-latest
     steps:
@@ -197,43 +115,3 @@ jobs:
             Repository: ${{ github.repository }}
             
             See changes: https://github.com/${{ github.repository }}/commit/${{github.sha}}
-        
-        
-        
-        
-        
-        
-        
-        
-          
-  #sys_info_windows:
-  #  runs-on: windows-latest 
-  #  steps:
-  #    - uses: actions/checkout@v3
-  #    
-  #    - name: check tools
-  #      run: |
-  #        cmake --version
-          
-  #build_windows:
-  #  needs: [sys_info_windows]
-  #  runs-on: windows-latest
-  #  steps: 
-  #    - uses: actions/checkout@v2
-  #   - uses: ilammy/msvc-dev-cmd@v1
-  #    - name: install_vcpkg
-  #      run: |
-  #        git clone https://github.com/Microsoft/vcpkg.git
-  #        .\vcpkg\bootstrap-vcpkg.bat
-  #        vcpkg install pthread
-  #        vcpkg integrate install
-          
-  #    - name: debug1
-  #      run: dir
-  #    - name: build
-  #      run: |
-  #        cmake -S ./ -DCMAKE_TOOLCHAIN_FILE=scripts/buildsystems/vcpkg.cmake -G "Visual Studio 17 2022" -A x64  
-  #        cmake --build . --config Release
-  #    - name: debug
-  #      run: dir
-  
