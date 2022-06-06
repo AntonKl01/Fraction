@@ -34,6 +34,9 @@ jobs:
         with:
           name: cmake_configuration_${{ matrix.os }}
           path: ./
+      
+      - name: deb
+        run: pwd
           
   build:
     needs: [configuration]
