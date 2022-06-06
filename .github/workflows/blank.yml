@@ -98,8 +98,90 @@ jobs:
           chmod ugo+rxw GHA-frac.info
           ./GHA-frac.info
           
+          
+          
+  sys_info_win:
+    runs-on: windows-latest 
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: check tools
+        run: |
+          cmake --version
+          
+  configuration_win:
+    needs: [sys_info_win]
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: configure_cmake_win
+        run: |
+          mkdir config && cd config
+          cmake ../
+          
+      - name: save_configuration
+        uses: actions/upload-artifact@master
+        with:
+          name: cmake_configuration_win
+          path: config/    
+          
+  build_win:
+    needs: [configuration_win]
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: download_configuration
+        uses: actions/download-artifact@master
+        with:
+          name: cmake_configuration_win
+          path: config/
+      
+      - name: cmake_build_win
+        run: |
+          cd config
+          cmake --build .
+          
+      - name: save_build
+        uses: actions/upload-artifact@master
+        with:
+          name: build_win
+          path: config/
+    
+  tests_win:
+    needs: [build]
+    runs-on: windows-latest
+    steps:
+      - name: download_build
+        uses: actions/download-artifact@master
+        with:
+          name: build_win
+          path: config/
+      - name: run_unix_test
+        run: |
+          cd config/test
+          chmod ugo+rxw GHA-frac.test
+          ./GHA-frac.test
+      
+  demonstration_win:
+    needs: [build]
+    runs-on: windows-latest
+    steps:
+      - name: download_build
+        uses: actions/download-artifact@master
+        with:
+          name: build_win
+          path: config/
+      - name: result
+        run: |
+          cd config/src
+          chmod ugo+rxw GHA-frac.info
+          ./GHA-frac.info
+      
+          
   report:
-    needs: [demonstration, tests]
+    needs: [demonstration, tests, demonstration_win, tests_win]
     if: failure() 
     runs-on: ubuntu-latest
     steps:
