@@ -2,6 +2,7 @@ set(header_path "${${PROJECT_NAME}_SOURCE_DIR}/include")
 set(header ${header_path}/Fraction.h)
 set(src Fraction.cpp)
 
+find_package(Threads)
 
 add_library(${PROJECT_NAME} SHARED
   ${header}
@@ -9,8 +10,7 @@ add_library(${PROJECT_NAME} SHARED
 target_include_directories(${PROJECT_NAME}
   PUBLIC ${CMAKE_CURRENT_BINARY_DIR}
          ${${PROJECT_NAME}_SOURCE_DIR}/include)
-target_link_libraries(${PROJECT_NAME}
-  pthread)
+target_link_libraries(libopenage PUBLIC Threads::Threads [...])
 
   
 add_executable(${PROJECT_NAME}.info main.cpp)
