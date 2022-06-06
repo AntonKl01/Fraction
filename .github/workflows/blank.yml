@@ -6,11 +6,8 @@ on:
   workflow_dispatch:
 
 jobs:  
-  sys_info_unix_macos:
-    runs-on: ${{ matrix.os }} 
-    strategy:
-      matrix:
-        os: [ ubuntu-latest, macos-latest ]
+  sys_info:
+    runs-on: ubuntu-latest 
     steps:
       - uses: actions/checkout@v3
       
@@ -19,8 +16,8 @@ jobs:
           cmake --version
           gcc --version
         
-  build_unix_macos:
-    needs: [sys_info_unix_macos]
+  build:
+    needs: [sys_info]
     runs-on: ${{ matrix.os }} 
     strategy:
       matrix:
@@ -30,7 +27,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
-      - name: build
+      - name: build_${{ matrix.os }}
         run: |
           cmake ./
           cmake --build .
@@ -53,7 +50,7 @@ jobs:
   report:
     if: failure() && github.ref == 'refs/heads/main' 
     runs-on: ubuntu-latest
-    needs: [build_unix_macos]
+    needs: [build]
     steps:
       - name: send telegram message on push
         uses: appleboy/telegram-action@master
