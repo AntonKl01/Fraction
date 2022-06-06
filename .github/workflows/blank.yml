@@ -27,16 +27,17 @@ jobs:
       
       - name: configure_cmake_${{ matrix.os }}
         run: |
-          cmake ./
+          mkdir config && cd config
+          cmake ../
           
       - name: save_configuration
         uses: actions/upload-artifact@master
         with:
           name: cmake_configuration_${{ matrix.os }}
-          path: ./
+          path: build/
       
       - name: deb
-        run: pwd
+        run: ls build
           
   build:
     needs: [configuration]
@@ -51,7 +52,7 @@ jobs:
         uses: actions/download-artifact@master
         with:
           name: cmake_configuration_${{ matrix.os }}
-          path: ./
+          path: build/
       
       - name: cmake_build_${{ matrix.os }}
         run: |
