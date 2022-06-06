@@ -56,11 +56,11 @@ jobs:
           cd config
           cmake --build .
           
-      - name: save_build_test
+      - name: save_build
         uses: actions/upload-artifact@master
         with:
-          name: build_test_${{ matrix.os }}
-          path: config/test   
+          name: build_${{ matrix.os }}
+          path: config/   
       
   tests:
     needs: [build]
@@ -73,13 +73,14 @@ jobs:
         uses: actions/download-artifact@master
         with:
           name: build_test_${{ matrix.os }}
-          path: config/test
+          path: config/
       - name: run_unix_test
         run: |
           cd config/test
+          chmod ugo+rxw GHA-frac.test
           ./GHA-frac.test
       
-  result:
+  demonstration:
     needs: [build]
     runs-on: ${{ matrix.os }}
     strategy:
@@ -94,10 +95,11 @@ jobs:
       - name: result
         run: |
           cd config/src
+          chmod ugo+rxw GHA-frac.info
           ./GHA-frac.info
           
   report:
-    needs: [result]
+    needs: [demonstration, tests]
     if: failure() 
     runs-on: ubuntu-latest
     steps:
