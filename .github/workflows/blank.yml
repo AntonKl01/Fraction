@@ -34,10 +34,10 @@ jobs:
         uses: actions/upload-artifact@master
         with:
           name: cmake_configuration_${{ matrix.os }}
-          path: build/
+          path: config/
       
       - name: deb
-        run: ls build
+        run: ls config
           
   build:
     needs: [configuration]
@@ -52,7 +52,10 @@ jobs:
         uses: actions/download-artifact@master
         with:
           name: cmake_configuration_${{ matrix.os }}
-          path: build/
+          path: config/
+      
+      - name: deb
+        run: ls config
       
       - name: cmake_build_${{ matrix.os }}
         run: |
