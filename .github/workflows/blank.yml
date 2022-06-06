@@ -35,9 +35,6 @@ jobs:
         with:
           name: cmake_configuration_${{ matrix.os }}
           path: config/
-      
-      - name: deb
-        run: ls config
           
   build:
     needs: [configuration]
@@ -54,12 +51,17 @@ jobs:
           name: cmake_configuration_${{ matrix.os }}
           path: config/
       
-      - name: deb
-        run: ls
-      
       - name: cmake_build_${{ matrix.os }}
         run: |
+          cd config
           cmake --build .
+          
+      - name: save_build_test
+        uses: actions/upload-artifact@master
+        with:
+          name: build_test_${{ matrix.os }}
+          path: config/test   
+      
   tests:
     needs: [build]
     runs-on: ${{ matrix.os }}
@@ -67,20 +69,32 @@ jobs:
       matrix:
         os: [ ubuntu-latest, macos-latest ]
     steps:
+      - name: download_build
+        uses: actions/download-artifact@master
+        with:
+          name: build_test_${{ matrix.os }}
+          path: config/test
       - name: run_unix_test
         run: |
-          ./test/GHA-frac.test
+          cd config/test
+          ./GHA-frac.test
       
   result:
-    needs: [tests]
+    needs: [build]
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ ubuntu-latest, macos-latest ]
     steps:
+      - name: download_build
+        uses: actions/download-artifact@master
+        with:
+          name: build_${{ matrix.os }}
+          path: config/
       - name: result
         run: |
-          ./src/GHA-frac.info
+          cd config/src
+          ./GHA-frac.info
           
   report:
     needs: [result]
