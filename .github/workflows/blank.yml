@@ -72,7 +72,7 @@ jobs:
       - name: download_build
         uses: actions/download-artifact@master
         with:
-          name: build_test_${{ matrix.os }}
+          name: build_${{ matrix.os }}
           path: config/
       - name: run_unix_test
         run: |
