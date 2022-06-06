@@ -55,7 +55,7 @@ jobs:
           path: config/
       
       - name: deb
-        run: ls config
+        run: ls
       
       - name: cmake_build_${{ matrix.os }}
         run: |
