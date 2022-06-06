@@ -1,36 +1,117 @@
-# This is a basic workflow to help you get started with Actions
-
 name: CI
 
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
-  push:
-    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
-jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
+jobs:  
+  sys_info:
+    runs-on: ubuntu-latest 
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
-
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
-
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
+      
+      - name: check tools
         run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+          cmake --version
+          gcc --version
+        
+  configuration:
+    needs: [sys_info]
+    runs-on: ${{ matrix.os }} 
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, macos-latest ]
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: configure_cmake_${{ matrix.os }}
+        run: |
+          mkdir config && cd config
+          cmake ../
+          
+      - name: save_configuration
+        uses: actions/upload-artifact@master
+        with:
+          name: cmake_configuration_${{ matrix.os }}
+          path: config/
+          
+  build:
+    needs: [configuration]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, macos-latest ]
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: download_configuration
+        uses: actions/download-artifact@master
+        with:
+          name: cmake_configuration_${{ matrix.os }}
+          path: config/
+      
+      - name: cmake_build_${{ matrix.os }}
+        run: |
+          cd config
+          cmake --build .
+          
+      - name: save_build
+        uses: actions/upload-artifact@master
+        with:
+          name: build_${{ matrix.os }}
+          path: config/   
+      
+  tests:
+    needs: [build]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, macos-latest ]
+    steps:
+      - name: download_build
+        uses: actions/download-artifact@master
+        with:
+          name: build_${{ matrix.os }}
+          path: config/
+      - name: run_unix_test
+        run: |
+          cd config/test
+          chmod ugo+rxw GHA-frac.test
+          ./GHA-frac.test
+      
+  demonstration:
+    needs: [build]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, macos-latest ]
+    steps:
+      - name: download_build
+        uses: actions/download-artifact@master
+        with:
+          name: build_${{ matrix.os }}
+          path: config/
+      - name: result
+        run: |
+          cd config/src
+          chmod ugo+rxw GHA-frac.info
+          ./GHA-frac.info
+        
+  report:
+    needs: [demonstration, tests]
+    if: failure() 
+    runs-on: ubuntu-latest
+    steps:
+      - name: send telegram message on push
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            ${{ github.actor }} created commit:
+            Commit message: ${{ github.event.commits[0].message }}
+            
+            Repository: ${{ github.repository }}
+            
+            See changes: https://github.com/${{ github.repository }}/commit/${{github.sha}}
